@@ -65,7 +65,7 @@ public class GameService {
        if (tableOfField[selectedRow][selectedColumn].isBombed()) {
             endTheGame();
         }
-        board.checkFieldsToUncover(tableOfField,selectedRow,selectedColumn);
+        board.verifyAndUncoverFields(tableOfField,selectedRow,selectedColumn);
     }
 
     public void saveTheGame() {
