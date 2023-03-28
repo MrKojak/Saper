@@ -59,7 +59,7 @@ public class Board {
                 int currentCoordinateX = coordinateCheckedFieldX + coordinateToCheckIsOutOfBandX;
                 int currentCoordinateY = coordinateCheckedFieldY + coordinateToCheckIsOutOfBandY;
 
-                if (!isIndexOutOfBound(currentCoordinateX, currentCoordinateY)) {
+                if (!isOutOfTable(currentCoordinateX, currentCoordinateY)) {
                     if (!(currentCoordinateX == coordinateCheckedFieldX && currentCoordinateY == coordinateCheckedFieldY)) {
                         if (!tableOfFields[currentCoordinateX][currentCoordinateY].isBombed()) {
                             tableOfFields[currentCoordinateX][currentCoordinateY].increaseNumberOfBombsAround();//przerobić tak żeby zwracało true/false i użyć w GameService
@@ -73,35 +73,38 @@ public class Board {
     }
 
 
-    private boolean isIndexOutOfBound(int coordinateX, int coordinateY) {
+    private boolean isOutOfTable(int coordinateX, int coordinateY) {
         return (coordinateX < 0 || coordinateY < 0) || (coordinateX >= WIDTH_OF_BOARD || coordinateY >= HEIGHT_OF_BOARD);
     }
 
-    public void checkFieldsToUncover(Field[][] tableOfFields, int coordinateCheckedFieldX, int coordinateCheckedFieldY) {
+    public void verifyAndUncoverFields(Field[][] fieldsTable, int centralX, int centralY) {
+        int currentX;
+        int currentY;
+        boolean isBombHere;
+        boolean isFieldCover;
 
+        for (int xShift = -1; xShift < 2; xShift++) {
+            for (int yShift = -1; yShift < 2; yShift++) {
+                currentX = centralX + xShift;
+                currentY = centralY + yShift;
 
-        for (int coordinateToCheckIsOutOfBandX = -1; coordinateToCheckIsOutOfBandX < 2; coordinateToCheckIsOutOfBandX++) {
-            for (int coordinateToCheckIsOutOfBandY = -1; coordinateToCheckIsOutOfBandY < 2; coordinateToCheckIsOutOfBandY++) {
-                int currentCoordinateX = coordinateCheckedFieldX + coordinateToCheckIsOutOfBandX;
-                int currentCoordinateY = coordinateCheckedFieldY + coordinateToCheckIsOutOfBandY;
-
-                if (!isIndexOutOfBound(currentCoordinateX, currentCoordinateY)) {
-                    if (!(currentCoordinateX == coordinateCheckedFieldX && currentCoordinateY == coordinateCheckedFieldY)) {
-                        if (!tableOfFields[currentCoordinateX][currentCoordinateY].isBombed()) {
-                            if (tableOfFields[currentCoordinateX][currentCoordinateY].getFieldStatus() != FieldStatus.FLAGUE) {
-                                if (tableOfFields[currentCoordinateX][currentCoordinateY].getFieldStatus() != FieldStatus.UNCOVER) {
-                                    tableOfFields[currentCoordinateX][currentCoordinateY].setUncoverStatus();
-                                    checkFieldsToUncover(tableOfFields, currentCoordinateX, currentCoordinateY);
-                                }
-                            }
-
-                        }
-                    }
+                if (isOutOfTable(currentX, currentY)) {
+                    continue;
                 }
 
+                if (!(currentX == centralX && currentY == centralY)) { //Gdyby zrobić poprawnie poruszanie petli od X i Y co dwa +2 to wtedy chyba ten if bylby niepotrzebny bo:
+                    // -1 + 2 = 1, wiec koordynaty dookola ktorych sprawdzamy nigdy nie bylyby sprawdzane
+
+                    isBombHere = fieldsTable[currentX][currentY].isBombed();
+                    isFieldCover = fieldsTable[currentX][currentY].getFieldStatus() == FieldStatus.COVER;
+
+                    if (!isBombHere && isFieldCover) {
+                        fieldsTable[currentX][currentY].uncoverField();
+                        verifyAndUncoverFields(fieldsTable, currentX, currentY);
+                    }
+                }
             }
         }
-
     }
 
 }

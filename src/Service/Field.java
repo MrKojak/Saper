@@ -22,7 +22,7 @@ public class Field {
 
     private FieldStatus fieldStatus = FieldStatus.COVER;
 
-    public void setUncoverStatus() {
+    public void uncoverField() {
          this.fieldStatus = FieldStatus.UNCOVER;
     }
     public void setFlagueStatus() {
