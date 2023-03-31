@@ -7,9 +7,6 @@ import java.util.Scanner;
 import static java.lang.System.exit;
 
 public class GameService {
-
-    private static final int WIDTH_OF_BOARD = 10;
-    private static final int HEIGHT_OF_BOARD = 10;
     Board board = new Board();
     Scanner receivedData = new Scanner(System.in);
     Field[][] tableOfField;
@@ -32,14 +29,18 @@ public class GameService {
     public void startNewGame(){
         tableOfField = board.fillBoard();
         UIService.showTheBoardAdmin(tableOfField);
-        while(true) {
+        while(!(board.checkIsGameOver())) {
             flagueOrUncover(tableOfField,chooseARow(),chooseAColumn());
-
             UIService.showTheBoard(tableOfField);
         }
+        UIService.showWinCommunicate();
+        UIService.showTheBoardWithBombs(tableOfField);
+        endTheGame();
 
 
     }
+
+
 
     private void flagueOrUncover(Field[][] tableOfField,int selectedRow, int selectedColumn) {
 
@@ -53,7 +54,6 @@ public class GameService {
             tableOfField[selectedRow][selectedColumn].setFlagueStatus();
 
         }else if (playersChooice.equals("U")) {
-            System.out.println("kopytko");
             uncoverChoosenField(tableOfField, selectedRow, selectedColumn);
         } else {
             System.out.println("Wrong choice, try again");
@@ -63,6 +63,8 @@ public class GameService {
 
     private void uncoverChoosenField(Field[][] tableOfField,int selectedRow,int selectedColumn) {
        if (tableOfField[selectedRow][selectedColumn].isBombed()) {
+           UIService.bombCommunicate();
+           UIService.showTheBoardWithBombs(tableOfField);
             endTheGame();
         }
         board.verifyAndUncoverFields(tableOfField,selectedRow,selectedColumn);
@@ -97,7 +99,6 @@ public class GameService {
         return receivedData.nextInt();
     }
     public void endTheGame() {
-        System.out.println("BOMB WAS HERE!");
         exit(0);
     }
 

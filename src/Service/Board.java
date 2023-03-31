@@ -8,11 +8,13 @@ public class Board {
 
     private static final int WIDTH_OF_BOARD = 10;
     private static final int HEIGHT_OF_BOARD = 10;
+    private static final int BOARD_SIZE = WIDTH_OF_BOARD*HEIGHT_OF_BOARD;
+
     Field[][] tableOfFields = new Field[HEIGHT_OF_BOARD][WIDTH_OF_BOARD];
 
     int id = 0;
-
-    private int BOMBS_AMOUNT = 40;
+    private int uncoverFieldsAmount = 0;
+    private int BOMBS_AMOUNT = 2;
     Random bombPlacement = new Random();
 
     Field[][] fillBoard() {
@@ -77,34 +79,34 @@ public class Board {
         return (coordinateX < 0 || coordinateY < 0) || (coordinateX >= WIDTH_OF_BOARD || coordinateY >= HEIGHT_OF_BOARD);
     }
 
-    public void verifyAndUncoverFields(Field[][] fieldsTable, int centralX, int centralY) {
-        int currentX;
-        int currentY;
-        boolean isBombHere;
-        boolean isFieldCover;
+    public void verifyAndUncoverFields(Field[][] fieldsTable, int checkedX, int checkedY) {
 
-        for (int xShift = -1; xShift < 2; xShift++) {
-            for (int yShift = -1; yShift < 2; yShift++) {
-                currentX = centralX + xShift;
-                currentY = centralY + yShift;
+        boolean isBombHere = fieldsTable[checkedX][checkedY].isBombed();
+        boolean isFieldCover = fieldsTable[checkedX][checkedY].getFieldStatus() == FieldStatus.COVER;
 
-                if (isOutOfTable(currentX, currentY)) {
-                    continue;
-                }
+        if (!isBombHere && isFieldCover) {
+            fieldsTable[checkedX][checkedY].uncoverField();
+            uncoverFieldsAmount++;
 
-                if (!(currentX == centralX && currentY == centralY)) { //Gdyby zrobić poprawnie poruszanie petli od X i Y co dwa +2 to wtedy chyba ten if bylby niepotrzebny bo:
-                    // -1 + 2 = 1, wiec koordynaty dookola ktorych sprawdzamy nigdy nie bylyby sprawdzane
+            if (fieldsTable[checkedX][checkedY].getQuantityBombsAround() == 0) {
 
-                    isBombHere = fieldsTable[currentX][currentY].isBombed();
-                    isFieldCover = fieldsTable[currentX][currentY].getFieldStatus() == FieldStatus.COVER;
+                for (int xShift = -1; xShift < 2; xShift++) {
+                    for (int yShift = -1; yShift < 2; yShift++) {
+                        int currentX = checkedX + xShift;
+                        int currentY = checkedY + yShift;
 
-                    if (!isBombHere && isFieldCover) {
-                        fieldsTable[currentX][currentY].uncoverField();
-                        verifyAndUncoverFields(fieldsTable, currentX, currentY);
+                        if (!((isOutOfTable(currentX, currentY))||(currentX == checkedX && currentY == checkedY))) {
+                            verifyAndUncoverFields(fieldsTable, currentX, currentY);
+                        }
                     }
                 }
             }
         }
     }
 
+
+    public boolean checkIsGameOver() {
+
+        return uncoverFieldsAmount == BOARD_SIZE - BOMBS_AMOUNT;
+    }
 }
