@@ -1,7 +1,7 @@
-package Service;
+package service;
 
 public enum FieldStatus {
     COVER,
     UNCOVER,
-    FLAGUE
+    FLAGGED
 }
