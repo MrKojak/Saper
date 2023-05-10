@@ -1,38 +1,35 @@
 package service;
 
+import DTO.Field;
 import ui.UI;
-
-import java.util.Scanner;
 
 import static java.lang.System.exit;
 
-public class GameService {
+class GameService {
     private static final int START_GAME = 1;
     private static final int SAVE_THE_GAME = 2;
     private static final int SAVES = 3;
     BoardService boardService = new BoardService();
-    Scanner receivedData = new Scanner(System.in);
-
-
     private void startNewGame() {
         Field[][] tableOfField = boardService.fillBoard();
-        UI.showTheBoardWithBombs(tableOfField, true);
+        UI.showTheBoard(tableOfField, true);
         do {
             boardService.flagOrUncover(tableOfField, chooseARow(), chooseAColumn());
-            UI.showTheBoard(tableOfField);
+            UI.showTheBoard(tableOfField,true);
+
 
         } while (boardService.areWeStillPlaying());
-        UI.showWinCommunicate();
+        if(boardService.areWeStillPlaying()) {
+            UI.showWinCommunicate();
+            UI.showTheBoard(tableOfField, true);
+        }
 
-        UI.showTheBoardWithBombs(tableOfField, true);
         endTheGame();
-
-
     }
 
     void initializeMenu() {
         UI.showMenuOptions();
-        choosePlayerMenu(UI.getPlayerChoice());
+        choosePlayerMenu(UI.getMenuOption());
     }
 
     private void choosePlayerMenu(int menuChoice) {
@@ -53,15 +50,12 @@ public class GameService {
 
     private int chooseARow() {
         UI.chooseARowCommunicat();
-        int choosenRow = receivedData.nextInt(); // Walidacja
-        return choosenRow;
+        return UI.getCoordinate();
     }
 
     private int chooseAColumn() {
-
         UI.chooseAColumnCommunicate();
-
-        return receivedData.nextInt(); //Walidacja
+        return UI.getCoordinate();
     }
 
     public static void endTheGame() {

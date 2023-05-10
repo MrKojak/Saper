@@ -1,4 +1,6 @@
-package service;
+package DTO;
+
+import DTO.FieldStatus;
 
 public class Field {
     private final int id;
@@ -23,7 +25,7 @@ public class Field {
         return fieldStatus;
     }
 
-    void setBomb() {
+    public void setBomb() {
         this.isBombed = true;
     }
     public boolean isBombed() {

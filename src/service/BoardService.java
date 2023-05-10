@@ -1,10 +1,12 @@
 package service;
 
+import DTO.Field;
+import DTO.FieldStatus;
 import ui.UI;
 
 import java.util.Random;
 
-public class BoardService {
+class BoardService {
     private static final String FLAG_FIELD = "F";
     private static final String UNCOVER_FIELD = "U";
     private static final int WIDTH_OF_BOARD = 10;
@@ -14,7 +16,7 @@ public class BoardService {
     
     private boolean areWeStillPlaying = true;
     private int uncoverFieldsAmount = 0;
-    Random bombPlacement = new Random();
+    private final Random bombPlacement = new Random();
 
     Field[][] fillBoard() {
         int currentIdToSet = 0;
@@ -73,29 +75,27 @@ public class BoardService {
 
     void flagOrUncover(Field[][] tableOfField, int selectedRow, int selectedColumn) {
         UI.askAboutFlagOrUncover();
-        String playerChoose = UI.receivePlayerChoose(); //Walidacja
-        if (playerChoose.equals(FLAG_FIELD)) {
+        String playerChoice = UI.getFOrU();
+
+        if (playerChoice.equals(FLAG_FIELD)) {
             tableOfField[selectedRow][selectedColumn].setFlag();
-        } else if (playerChoose.equals(UNCOVER_FIELD)) {
+        } else if (playerChoice.equals(UNCOVER_FIELD)) {
             uncoverChosenField(tableOfField, selectedRow, selectedColumn);
         } else {
-            UI.wrongParameterCommunicate();
             flagOrUncover(tableOfField, selectedRow, selectedColumn);
         }
     }
 
     private void uncoverChosenField(Field[][] tableOfField, int selectedRow, int selectedColumn) {
         if (tableOfField[selectedRow][selectedColumn].isBombed()) {
-           loseTheGame(tableOfField);
-        }
-        verifyAndUncoverFields(tableOfField, selectedRow, selectedColumn);
+           loseTheGame();
+        }else {verifyAndUncoverFields(tableOfField, selectedRow, selectedColumn);}
     }
-    private void loseTheGame(Field[][] tableOfField){
-        UI.showTheBoardWithBombs(tableOfField, true);
+    private void loseTheGame(){
         UI.loseGameCommunicate();
         areWeStillPlaying = false;
     }
-    public void verifyAndUncoverFields(Field[][] fieldsTable, int checkedX, int checkedY) {
+  private void verifyAndUncoverFields(Field[][] fieldsTable, int checkedX, int checkedY) {
         uncoverField(fieldsTable,checkedX,checkedY);
 
             if (fieldsTable[checkedX][checkedY].getQuantityBombsAround() == 0) {
@@ -127,7 +127,7 @@ public class BoardService {
         return (coordinateX < 0 || coordinateY < 0) || (coordinateX >= WIDTH_OF_BOARD || coordinateY >= HEIGHT_OF_BOARD);
     }
 
-    private boolean areYouWinningTheGame() {
+    public boolean areYouWinningTheGame() {
         return uncoverFieldsAmount == BOARD_SIZE - BOMBS_AMOUNT;
     }
     
