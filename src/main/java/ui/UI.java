@@ -17,6 +17,8 @@ public class UI {
         System.out.println("1. Start new game");
         System.out.println("2. Save the game");
         System.out.println("3. Load game");
+        System.out.println("4. Remove save");
+        System.out.println("5. Back to game");
     }
 
     public static void showTheBoard(Field[][] tableOfFields, boolean withBombs) {
@@ -56,9 +58,12 @@ public class UI {
     public static void loseGameCommunicate() {
         System.out.println("There was a bomb, You lose");
     }
+    public static void saveExistCommunicate() {
+        System.out.println("That name of save already exist");
+    }
 
     public static void askAboutFlagOrUncoverOrUnflag() {
-        System.out.println("F - flag field U - uncover field UF - unflag");
+        System.out.println("F - flag field U - uncover field UF - unflag M - menu");
         System.out.println("Choose an option: ");
     }
     public static void wrongParameterCommunicate() {

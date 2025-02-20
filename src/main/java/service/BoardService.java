@@ -1,6 +1,5 @@
 package service;
 
-import com.sun.xml.bind.v2.TODO;
 import databaseService.Field;
 import databaseService.FieldStatus;
 import lombok.Getter;
@@ -119,12 +118,12 @@ class BoardService {
         return (coordinateX < 0 || coordinateY < 0) || (coordinateX >= WIDTH_OF_BOARD || coordinateY >= HEIGHT_OF_BOARD);
     }
 
-    public boolean areYouWinningTheGame() {
+    public boolean areYouWinTheGame() {
         return uncoverFieldsAmount == BOARD_SIZE - BOMBS_AMOUNT;
     }
 
     public boolean areWeStillPlaying(){
-        return areWeStillPlaying && !areYouWinningTheGame();
+        return areWeStillPlaying && !areYouWinTheGame();
     }
 
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapperDTO {
-    int entityIterator = 0;
     List<Field> listOfFields = new ArrayList<>();
 
     public Field[][] mapEntitiesToFieldList(List<FieldEntity> entities) {

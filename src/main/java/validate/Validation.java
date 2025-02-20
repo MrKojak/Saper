@@ -30,7 +30,7 @@ public class Validation {
     public static boolean validationMenuOption(String dataToValidate) {
         if (dataToValidate.matches("\\d+")) {
             int dataToValidateInt = Integer.parseInt(dataToValidate);
-            return dataToValidateInt > 0 && dataToValidateInt < 4;
+            return dataToValidateInt > 0 && dataToValidateInt < 6;
         }
         UI.wrongParameterCommunicate();
         return false;

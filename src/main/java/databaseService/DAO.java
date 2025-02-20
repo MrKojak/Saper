@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-
+import org.hibernate.Transaction;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
 
 @AllArgsConstructor
 public class DAO {
@@ -17,24 +16,11 @@ public class DAO {
     public void saveGameToBase(GameNameEntity gameNameEntity) {
         try (Session session = sessionFactory.openSession()) {
 
-            List<String> gamenames = getListOfGameNames();
-            Boolean isNameExist = false;
-            for (String gamename : gamenames) {
-                if (Objects.equals(gamename, gameNameEntity.getName())) {
-                    session.update(gameNameEntity);
-                    isNameExist = true;
-                    break;
-
-                }
-
-            }
-            if (!isNameExist){
-                session.save(gameNameEntity);
-            }
+            session.saveOrUpdate(gameNameEntity);
 
 
         } catch (HibernateException ex) {
-            ex.printStackTrace();
+            System.err.println("Błąd: " + ex.getMessage());
         }
     }
 
@@ -44,17 +30,36 @@ public class DAO {
         try (Session session = sessionFactory.openSession()) {
 
 
-            String hql = "From GameNameEntity where gameName =:gameName";
-            Query query = session.createQuery(hql);
-            query.setParameter("gameName", gameName);
-            GameNameEntity gameNameEntity = (GameNameEntity) query.uniqueResult();
+            GameNameEntity gameNameEntity = session.createQuery(
+                            "From GameNameEntity where gameName =:gameName", GameNameEntity.class)
+                    .setParameter("gameName", gameName)
+                    .getSingleResult();
             entityList = gameNameEntity.getFieldEnities();
 
 
         } catch (HibernateException ex) {
-            ex.printStackTrace();
+            System.err.println("Błąd: " + ex.getMessage());
         }
         return entityList;
+    }
+
+    public void removeGameByName(String gameName) {
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            GameNameEntity game = session.createQuery(
+                            "From GameNameEntity where gameName =:gameName", GameNameEntity.class)
+                    .setParameter("gameName", gameName)
+                    .getSingleResult();
+            session.remove(game);
+
+            transaction.commit();
+        } catch (HibernateException ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.err.println("Błąd: " + ex.getMessage());
+        }
     }
 
     public List<String> getListOfGameNames() {
@@ -62,7 +67,7 @@ public class DAO {
         try (Session session = sessionFactory.openSession()) {
             gameNameList = session.createQuery("Select name From GameNameEntity", String.class).getResultList();
         } catch (HibernateException ex) {
-            ex.printStackTrace();
+            System.err.println("Błąd: " + ex.getMessage());
             return Collections.emptyList();
         }
         return gameNameList;
