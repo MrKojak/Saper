@@ -1,19 +1,19 @@
 package databaseService;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 public class Field {
 
-    private final int id;
+    @Getter
+    private int id;
     private boolean isBombed = false;
     private int bombsAround = 0;
+    @Getter
     private FieldStatus fieldStatus = FieldStatus.COVER;
     public Field(int id) {
         this.id = id;
-    }
-    public int getId() {
-        return id;
     }
     public void setUncover() {
         this.fieldStatus = FieldStatus.UNCOVER;
@@ -29,11 +29,6 @@ public class Field {
             System.out.println("This field is not flagged");
         }
     }
-
-    public FieldStatus getFieldStatus() {
-        return fieldStatus;
-    }
-
     public void setBomb() {
         this.isBombed = true;
     }
